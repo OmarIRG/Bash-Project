@@ -21,3 +21,9 @@ connect_to_database() {
         dialog --msgbox "Database does not exist!" 8 40
     fi
 }
+
+# Function to drop a database (remove directory)
+drop_database() {
+    rm -rf "./$1"
+    log_message "Dropped database: $1"
+}
