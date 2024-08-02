@@ -11,3 +11,13 @@ list_databases() {
     ls -d ./*/ 2>/dev/null | sed 's|^\./||; s|/$||'
 }
 
+# Function to connect to a database (change directory)
+connect_to_database() {
+    if [[ -d "./$1" ]]; then
+        cd "./$1"
+        table_menu
+        cd ..
+    else
+        dialog --msgbox "Database does not exist!" 8 40
+    fi
+}
