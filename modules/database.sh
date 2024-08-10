@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# To able to use log_message funcion
+source ./modules/utils.sh
+
 # Directory to store all databases
 DATABASES_DIR="./databases"
 
@@ -29,6 +32,7 @@ create_database() {
 
     mkdir -p "$db_path"
     log_message "Created database: $1"
+
     dialog --msgbox "Database '$1' created successfully." 8 40
 }
 
