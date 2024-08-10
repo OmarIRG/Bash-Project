@@ -19,7 +19,38 @@ main_menu() {
             "List Databases") list_databases_dialog ;;
             "Connect To Database") connect_database_dialog ;;
             "Drop Database") drop_database_dialog ;;
-            "Exit") exit 0 ;;
+            "Exit")  ;;
         esac
     done
+}
+
+
+# Function to create a database
+create_database_dialog() {
+    db_name=$(zenity --entry --title="Create Database" --text="Enter database name:")
+    if [[ -n "$db_name" ]]; then
+        create_database "$db_name"
+    fi
+}
+
+# Function to list databases
+list_databases_dialog() {
+    databases=$(list_databases)
+    zenity --info --title="List Databases" --text="$databases" --width=300 --height=250
+}
+
+# Function to connect to a database
+connect_database_dialog() {
+    db_name=$(zenity --entry --title="Connect To Database" --text="Enter database name to connect:")
+    if [[ -n "$db_name" ]]; then
+        connect_to_database "$db_name"
+    fi
+}
+
+# Function to drop a database
+drop_database_dialog() {
+    db_name=$(zenity --entry --title="Drop Database" --text="Enter database name to drop:")
+    if [[ -n "$db_name" ]]; then
+        drop_database "$db_name"
+    fi
 }
