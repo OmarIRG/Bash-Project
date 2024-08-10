@@ -6,6 +6,7 @@ source ./modules/utils.sh
 # Directory to store all databases
 DATABASES_DIR="./databases"
 
+
 # Function to initialize the databases directory
 initialize_databases_dir() {
     if [[ ! -d "$DATABASES_DIR" ]]; then
@@ -20,20 +21,19 @@ create_database() {
 
     # Check for empty or invalid database name
     if [[ -z "$1" || ! "$1" =~ ^[a-zA-Z0-9_]+$ ]]; then
-        dialog --msgbox "Invalid database name! Use only alphanumeric characters and underscores." 8 50
+        zenity --error --text="Invalid database name! Use only alphanumeric characters and underscores."
         return
     fi
 
     # Check if the database already exists
     if [[ -d "$db_path" ]]; then
-        dialog --msgbox "Database '$1' already exists!" 8 40
+        zenity --error --text="Database '$1' already exists!"
         return
     fi
 
     mkdir -p "$db_path"
     log_message "Created database: $1"
-
-    dialog --msgbox "Database '$1' created successfully." 8 40
+    zenity --info --text="Database '$1' created successfully."
 }
 
 # Function to list databases (directories)
@@ -50,7 +50,7 @@ connect_to_database() {
         table_menu
         cd - > /dev/null
     else
-        dialog --msgbox "Database does not exist!" 8 40
+        zenity --error --text="Database does not exist!"
     fi
 }
 
@@ -61,12 +61,11 @@ drop_database() {
     if [[ -d "$db_path" ]]; then
         rm -rf "$db_path"
         log_message "Dropped database: $1"
-        dialog --msgbox "Database '$1' dropped successfully." 8 40
+        zenity --info --text="Database '$1' dropped successfully."
     else
-        dialog --msgbox "Database does not exist!" 8 40
+        zenity --error --text="Database does not exist!"
     fi
 }
 
 # Initialize databases directory
 initialize_databases_dir
-
