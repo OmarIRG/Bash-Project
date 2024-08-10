@@ -1,11 +1,7 @@
 #!/bin/bash
 
-# To able to use log_message funcion
-source ./modules/utils.sh
-
 # Directory to store all databases
 DATABASES_DIR="./databases"
-
 
 # Function to initialize the databases directory
 initialize_databases_dir() {
@@ -20,11 +16,11 @@ create_database() {
     local db_path="$DATABASES_DIR/$1"
 
     # Check for empty or invalid database name
-    if [[ -z "$1" || ! "$1" =~ ^[a-zA-Z0-9_]+$ ]]; then
-        zenity --error --text="Invalid database name! Use only alphanumeric characters and underscores."
-        return
-    fi
-
+    if [[ -z "$1" || ! "$1" =~ ^[a-zA-Z_][a-zA-Z0-9_]*$ ]]; then
+    	zenity --error --text="Invalid database name! Must begin with an alphabetic character or underscore, and contain only alphanumeric characters and underscores."
+    	return
+    fi	
+												
     # Check if the database already exists
     if [[ -d "$db_path" ]]; then
         zenity --error --text="Database '$1' already exists!"
@@ -69,3 +65,4 @@ drop_database() {
 
 # Initialize databases directory
 initialize_databases_dir
+
