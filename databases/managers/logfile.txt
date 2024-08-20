@@ -1,0 +1,2 @@
+Tue Aug 20 06:49:58 PDT 2024: Created table: managerss with columns: id:int:pk, name:str, age:int
+Tue Aug 20 06:50:25 PDT 2024: Inserted into table: managerss values: 1 Abdo 25

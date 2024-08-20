@@ -1,0 +1,4 @@
+Tue Aug 20 06:28:23 PDT 2024: Created database: Database1
+Tue Aug 20 06:36:37 PDT 2024: Dropped database: Database1
+Tue Aug 20 06:38:46 PDT 2024: Created database: employee_ID
+Tue Aug 20 06:49:03 PDT 2024: Created database: managers

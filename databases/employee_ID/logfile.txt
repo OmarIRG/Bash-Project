@@ -1,0 +1,3 @@
+Tue Aug 20 06:41:04 PDT 2024: Created table: employees with columns: id:int, name:str, age:int
+Tue Aug 20 06:47:03 PDT 2024: Inserted into table: employees values: 1 omar 23
+Tue Aug 20 06:48:28 PDT 2024: Inserted into table: employees values: 2 islam 23
