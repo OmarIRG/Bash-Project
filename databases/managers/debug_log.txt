@@ -1,0 +1,66 @@
+DEBUG: select_from_table function called with table_name='managerss'
+DEBUG: Columns read from 'managerss.meta' = 'id:int:pk, name:str, age:int'
+DEBUG: Data read from table 'managerss' = '1 Abdo 25
+3 om 50'
+DEBUG: Output to be displayed = 'Columns: id:int:pk, name:str, age:int\n\n1 Abdo 25
+3 om 50'
+DEBUG: select_from_table function called with table_name='managerss'
+DEBUG: Columns read from 'managerss.meta' = 'id'
+DEBUG: Data read from table 'managerss' = '1 Abdo 25
+3 om 50'
+DEBUG: Output to be displayed = 'Columns: id\n\n1 Abdo 25
+3 om 50'
+DEBUG: select_from_table function called with table_name='managerss'
+DEBUG: Columns read from 'managerss.meta' = 'id:int:pk, name:str, age:int'
+DEBUG: Data read from table 'managerss' = '1 Abdo 25
+3 om 50'
+DEBUG: Output to be displayed = 'Columns: id:int:pk, name:str, age:int\n\n1 Abdo 25
+3 om 50'
+DEBUG: select_from_table function called with table_name='managaerss'
+DEBUG: select_from_table function called with table_name='managerss'
+DEBUG: Columns read from 'managerss.meta' = 'id'
+DEBUG: Data read from table 'managerss' = '1 Abdo 25
+3 om 50'
+DEBUG: Output to be displayed = 'Columns: id\n\n1 Abdo 25
+3 om 50'
+DEBUG: select_from_table function called with table_name='managerss'
+DEBUG: Columns read from 'managerss.meta' = 'id'
+DEBUG: Data read from table 'managerss' = '1 Abdo 25
+3 om 50'
+DEBUG: Output to be displayed = 'Columns: id\n\n1 Abdo 25
+3 om 50'
+DEBUG: select_from_table function called with table_name='managerss'
+DEBUG: Columns read from 'managerss.meta' = 'id'
+DEBUG: Data read from table 'managerss' = '1 Abdo 25
+3 om 50'
+DEBUG: Output to be displayed = 'Columns: id\n\n1 Abdo 25
+3 om 50'
+DEBUG: select_from_table function called with table_name='managerss'
+DEBUG: Columns read from 'managerss.meta' = 'id:int:pk, name:str, age:int'
+DEBUG: Data read from table 'managerss' = '1 Abdo 25
+3 om 50'
+DEBUG: Output to be displayed = 'Columns: id:int:pk, name:str, age:int\n\n1 Abdo 25
+3 om 50'
+DEBUG: select_from_table function called with table_name='managerss'
+DEBUG: Columns read from 'managerss.meta' = 'id:int:pk, name:str, age:int'
+DEBUG: Data read from table 'managerss' = '1 Abdo 25
+3 om 50'
+DEBUG: Output to be displayed = 'Columns: id:int:pk, name:str, age:int\n\n1 Abdo 25
+3 om 50'
+DEBUG: select_from_table function called with table_name='managerss'
+DEBUG: Columns read from 'managerss.meta' = 'id:int:pk, name:str, age:int'
+DEBUG: Data read from table 'managerss' = '1 Abdo 25
+3 om 50'
+DEBUG: Output to be displayed = 'Columns: id:int:pk, name:str, age:int\n\n1 Abdo 25
+3 om 50'
+DEBUG: select_from_table function called with table_name='employees'
+DEBUG: Columns read from 'employees.meta' = 'id:int:pk,name:string'
+DEBUG: Data read from table 'employees' = ''
+DEBUG: select_from_table function called with table_name='managerss'
+DEBUG: Columns read from 'managerss.meta' = 'id:int:pk, name:str, age:int'
+DEBUG: Data read from table 'managerss' = '1 Abdo 25
+3 om 50
+4          omarr  20'
+DEBUG: Output to be displayed = 'Columns: id:int:pk, name:str, age:int\n\n1 Abdo 25
+3 om 50
+4          omarr  20'

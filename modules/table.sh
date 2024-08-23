@@ -94,66 +94,37 @@ insert_into_table_dialog() {
 
 # Insert into table function with data type and primary key validation
 insert_into_table() {
-    table_name=$1
-    values=$2
+    local table_name=$1
+    local values=$2
 
-    # Validate if table exists
+    # Check if the table exists
     if [[ ! -f "$table_name" ]]; then
-        zenity --error --text="Table does not exist!"
+        zenity --error --text="Table '$table_name' does not exist!"
         return
     fi
 
-    # Split columns and values into arrays
-    IFS='|' read -r -a columns <<< "$(cat "$table_name.meta")"
-    IFS=',' read -r -a values <<< "$values"
+    # Read the columns from the metadata file
+    local columns=$(cat "$table_name.meta")
+    local column_count=$(echo "$columns" | grep -o '|' | wc -l)
+    column_count=$((column_count + 1))  # Number of columns is one more than the number of pipes
 
-    if [[ ${#columns[@]} -ne ${#values[@]} ]]; then
+    # Split values into an array
+    IFS=',' read -r -a values_array <<< "$values"
+
+    # Check if the number of values matches the number of columns
+    if [[ ${#values_array[@]} -ne $column_count ]]; then
         zenity --error --text="The number of values does not match the number of columns!"
         return
     fi
 
-    # Check primary key constraint
-    primary_key_index=$(awk -F '|' '{for (i=1; i<=NF; i++) if ($i ~ /:pk$/) print i}' "$table_name.meta")
-    primary_key_value="${values[$primary_key_index-1]}"
+    # Insert the values into the table
+    echo "$values" >> "$table_name"
 
-    if grep -q "^$primary_key_value," "$table_name"; then
-        zenity --error --text="Primary key constraint violated!"
-        return
-    fi
-
-    # Validate data types
-    for i in "${!columns[@]}"; do
-        col="${columns[$i]}"
-        value="${values[$i]}"
-
-        col_name=$(echo "$col" | cut -d ':' -f 1)
-        col_type=$(echo "$col" | cut -d ':' -f 2)
-
-        case "$col_type" in
-            int)
-                if ! [[ "$value" =~ ^-?[0-9]+$ ]]; then
-                    zenity --error --text="Data type error: $value is not an integer!"
-                    return
-                fi
-                ;;
-            str)
-                if ! [[ "$value" =~ ^[a-zA-Z ]+$ ]]; then
-                    zenity --error --text="Data type error: $value is not a string!"
-                    return
-                fi
-                ;;
-            *)
-                zenity --error --text="Unknown data type '$col_type'!"
-                return
-                ;;
-        esac
-    done
-
-    # Append the new record
-    echo "${values[*]}" >> "$table_name"
-    log_message "Inserted into table: $table_name values: ${values[*]}"
+    # Log the insertion and notify the user
+    log_message "Inserted into table: $table_name values: $values"
     zenity --info --text="Values inserted successfully!"
 }
+
 
 # Select from table function
 select_from_table_dialog() {
@@ -260,7 +231,7 @@ update_table() {
 
 # List tables function
 list_tables() {
-    ls -p | grep -v / | grep -v "logfile.txt" | grep -v ".meta"
+    ls -p | grep -v / | grep -v "logfile.txt" | grep -v "debug_log.txt" | grep -v ".meta"
 }
 
 # Drop table function
