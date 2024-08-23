@@ -1,6 +1,6 @@
 #!/bin/bash
 
-source utils.sh
+source ./modules/utils.sh
 
 # Function to display the table menu using Zenity
 table_menu() {
@@ -71,63 +71,25 @@ drop_table_dialog() {
 # Insert into table function
 insert_into_table_dialog() {
     table_name=$(zenity --entry --title="Insert Into Table" --text="Enter table name:")
-    values=$(zenity --entry --title="Insert Values" --text="Enter values (comma-separated):")
-    if [[ -n "$table_name" && -n "$values" ]]; then
-        insert_into_table "$table_name" "$values"
-    fi
-}
-
-# Select from table function
-select_from_table() {
-    table_name=$1
-
-    # Validate if table exists
-    if [[ ! -f "$table_name" ]]; then
-        zenity --error --text="Table does not exist!"
+    if [[ -z "$table_name" ]]; then
+        zenity --error --text="Table name cannot be empty!"
         return
     fi
 
-    # Read the column names from the .meta file
+    if [[ ! -f "$table_name" ]]; then
+        zenity --error --text="Table '$table_name' does not exist!"
+        return
+    fi
+
     columns=$(cat "$table_name.meta" | sed 's/|/, /g')
 
-    # Fetch the data from the table
-    data=$(cat "$table_name" | column -s "," -t)
-
-    # Combine the column names and data
-    output="Columns: $columns\n\n$data"
-
-    # Display the table contents with column names
-    zenity --info --title="Select From Table" --text="$output" --width=400 --height=300
-}
-
-# Function to delete from a table
-delete_from_table_dialog() {
-    table_name=$(zenity --entry --title="Delete From Table" --text="Enter table name:")
-    condition=$(zenity --entry --title="Delete Condition" --text="Enter condition:")
-    if [[ -n "$table_name" && -n "$condition" ]]; then
-        delete_from_table "$table_name" "$condition"
+    values=$(zenity --entry --title="Insert Values" --text="Enter values for the columns ($columns), separated by commas:")
+    if [[ -z "$values" ]]; then
+        zenity --error --text="Values cannot be empty!"
+        return
     fi
-}
 
-# Function to update a table
-update_table_dialog() {
-    table_name=$(zenity --entry --title="Update Table" --text="Enter table name:")
-    set_clause=$(zenity --entry --title="Set Clause" --text="Enter SET clause:")
-    condition=$(zenity --entry --title="Update Condition" --text="Enter condition:")
-    if [[ -n "$table_name" && -n "$set_clause" && -n "$condition" ]]; then
-        update_table "$table_name" "$set_clause" "$condition"
-    fi
-}
-
-# List tables function
-list_tables() {
-    ls -p | grep -v / | grep -v "logfile.txt" | grep -v ".meta"
-}
-
-# Drop table function
-drop_table() {
-    rm -f "$1" "$1.meta"
-    log_message "Dropped table: $1"
+    insert_into_table "$table_name" "$values"
 }
 
 # Insert into table function with data type and primary key validation
@@ -144,6 +106,11 @@ insert_into_table() {
     # Split columns and values into arrays
     IFS='|' read -r -a columns <<< "$(cat "$table_name.meta")"
     IFS=',' read -r -a values <<< "$values"
+
+    if [[ ${#columns[@]} -ne ${#values[@]} ]]; then
+        zenity --error --text="The number of values does not match the number of columns!"
+        return
+    fi
 
     # Check primary key constraint
     primary_key_index=$(awk -F '|' '{for (i=1; i<=NF; i++) if ($i ~ /:pk$/) print i}' "$table_name.meta")
@@ -170,10 +137,14 @@ insert_into_table() {
                 fi
                 ;;
             str)
-                if ! [[ "$value" =~ ^[a-zA-Z]+$ ]]; then
+                if ! [[ "$value" =~ ^[a-zA-Z ]+$ ]]; then
                     zenity --error --text="Data type error: $value is not a string!"
                     return
                 fi
+                ;;
+            *)
+                zenity --error --text="Unknown data type '$col_type'!"
+                return
                 ;;
         esac
     done
@@ -181,20 +152,64 @@ insert_into_table() {
     # Append the new record
     echo "${values[*]}" >> "$table_name"
     log_message "Inserted into table: $table_name values: ${values[*]}"
+    zenity --info --text="Values inserted successfully!"
+}
+
+# Select from table function
+select_from_table_dialog() {
+    table_name=$(zenity --entry --title="Select From Table" --text="Enter table name:")
+    if [[ -n "$table_name" ]]; then
+        select_from_table "$table_name"
+    fi
 }
 
 # Select from table function
 select_from_table() {
     table_name=$1
 
+    # Debug: Check if the function is being called
+    echo "DEBUG: select_from_table function called with table_name='$table_name'" >> debug_log.txt
+
     # Validate if table exists
     if [[ ! -f "$table_name" ]]; then
-        zenity --error --text="Table does not exist!"
+        zenity --error --text="Table '$table_name' does not exist!"
         return
     fi
 
-    # Display the table contents
-    cat "$table_name" | column -s "," -t
+    # Read the column names from the .meta file
+    columns=$(cat "$table_name.meta" | sed 's/|/, /g')
+
+    # Debug: Log the columns read from the meta file
+    echo "DEBUG: Columns read from '$table_name.meta' = '$columns'" >> debug_log.txt
+
+    # Fetch the data from the table
+    data=$(cat "$table_name" | column -s "," -t)
+
+    # Debug: Log the data read from the table
+    echo "DEBUG: Data read from table '$table_name' = '$data'" >> debug_log.txt
+
+    if [[ -z "$data" ]]; then
+        zenity --info --title="Select From Table" --text="No data available in table '$table_name'." --width=400 --height=300
+        return
+    fi
+
+    # Combine the column names and data
+    output="Columns: $columns\n\n$data"
+
+    # Debug: Log the output that will be displayed
+    echo "DEBUG: Output to be displayed = '$output'" >> debug_log.txt
+
+    # Display the table contents with column names
+    zenity --info --title="Select From Table" --text="$output" --width=400 --height=300
+}
+
+# Delete from table function
+delete_from_table_dialog() {
+    table_name=$(zenity --entry --title="Delete From Table" --text="Enter table name:")
+    condition=$(zenity --entry --title="Delete Condition" --text="Enter condition:")
+    if [[ -n "$table_name" && -n "$condition" ]]; then
+        delete_from_table "$table_name" "$condition"
+    fi
 }
 
 # Delete from table function
@@ -211,6 +226,17 @@ delete_from_table() {
     # Delete matching records
     awk -v cond="$condition" 'BEGIN {FS=OFS=","} {if ($0 !~ cond) print $0}' "$table_name" > temp && mv temp "$table_name"
     log_message "Deleted from table: $table_name where: $condition"
+    zenity --info --text="Deleted from table '$table_name' where '$condition'"
+}
+
+# Update table function
+update_table_dialog() {
+    table_name=$(zenity --entry --title="Update Table" --text="Enter table name:")
+    set_clause=$(zenity --entry --title="Set Clause" --text="Enter SET clause:")
+    condition=$(zenity --entry --title="Update Condition" --text="Enter condition:")
+    if [[ -n "$table_name" && -n "$set_clause" && -n "$condition" ]]; then
+        update_table "$table_name" "$set_clause" "$condition"
+    fi
 }
 
 # Update table function
@@ -229,5 +255,17 @@ update_table() {
     awk -v set_clause="$set_clause" -v cond="$condition" 'BEGIN {FS=OFS=","; split(set_clause, set_arr, "=")} 
     {if ($0 ~ cond) {for (i=1; i<=NF; i++) if ($i ~ set_arr[1]) $i=set_arr[2]}}1' "$table_name" > temp && mv temp "$table_name"
     log_message "Updated table: $table_name set: $set_clause where: $condition"
+    zenity --info --text="Updated table '$table_name' set '$set_clause' where '$condition'"
+}
+
+# List tables function
+list_tables() {
+    ls -p | grep -v / | grep -v "logfile.txt" | grep -v ".meta"
+}
+
+# Drop table function
+drop_table() {
+    rm -f "$1" "$1.meta"
+    log_message "Dropped table: $1"
 }
 
