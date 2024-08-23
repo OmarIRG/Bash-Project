@@ -77,13 +77,27 @@ insert_into_table_dialog() {
     fi
 }
 
-# Function to select from a table
-select_from_table_dialog() {
-    table_name=$(zenity --entry --title="Select From Table" --text="Enter table name:")
-    if [[ -n "$table_name" ]]; then
-        results=$(select_from_table "$table_name")
-        zenity --info --title="Select From Table" --text="$results" --width=400 --height=300
+# Select from table function
+select_from_table() {
+    table_name=$1
+
+    # Validate if table exists
+    if [[ ! -f "$table_name" ]]; then
+        zenity --error --text="Table does not exist!"
+        return
     fi
+
+    # Read the column names from the .meta file
+    columns=$(cat "$table_name.meta" | sed 's/|/, /g')
+
+    # Fetch the data from the table
+    data=$(cat "$table_name" | column -s "," -t)
+
+    # Combine the column names and data
+    output="Columns: $columns\n\n$data"
+
+    # Display the table contents with column names
+    zenity --info --title="Select From Table" --text="$output" --width=400 --height=300
 }
 
 # Function to delete from a table

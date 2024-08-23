@@ -19,7 +19,11 @@ main_menu() {
             "List Databases") list_databases_dialog ;;
             "Connect To Database") connect_database_dialog ;;
             "Drop Database") drop_database_dialog ;;
-            "Exit")  ;;
+            "Exit") zenity --info --text="Exiting the program."
+                exit 0 ;;
+            *) 
+                zenity --error --text="Invalid selection, please try again."
+                ;; 
         esac
     done
 }
